@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
         if (mode == UNKNOWN_MODE) {
             fprintf(stderr, "Unrecognized mode \"%s\"", argv[1]);
             return 2;
-        } else if (mode == JULIA_MODE && argc != 13) {
+        } else if (mode == JULIA_MODE && argc < 13) {
             fprintf(stderr, "Usage: %s J [width] [height] [x_min] [x_max] [y_min] [y_max] [max_iterations] [color_multiplier] [c_re] [c_im] [d]\n", argv[0]);
             return 3;
-        } else if (mode == MANDELBROT_MODE && argc != 11) {
+        } else if (mode == MANDELBROT_MODE && argc < 11) {
             fprintf(stderr, "Usage: %s M [width] [height] [x_min] [x_max] [y_min] [y_max] [max_iterations] [color_multiplier] [d]\n", argv[0]);
             return 4;
         }
@@ -49,6 +49,16 @@ int main(int argc, char **argv) {
         const double c_im = mode == JULIA_MODE ? strtod(argv[arg++], NULL) : 0;
         const double d = strtod(argv[arg++], NULL);
 
+        float r=1.0, g=1.0, b=1.0;
+        if (arg == argc-1) {  // last argument is a color
+          char *color_str = argv[arg];
+          int r255, g255, b255;
+          sscanf(color_str, "%02x%02x%02x", &r255, &g255, &b255);
+          r = (float)r255/255.0;
+          g = (float)g255/255.0;
+          b = (float)b255/255.0;
+        }
+
         const double x_step = (x_max - x_min) / width;
         const double y_step = (y_max - y_min) / height;
 
@@ -64,6 +74,9 @@ int main(int argc, char **argv) {
         int iterations = 0, color = 0;
 
         output_color_header(width, height);
+        fprintf(stdout, "# %c width:%d height:%d\n", mode==1 ? 'J' : 'M', width, height);
+        fprintf(stdout, "# color:%s ", argv[13]);
+        fprintf(stdout, "r:%f, g:%f, b%f\n", r, g, b);
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -90,7 +103,7 @@ int main(int argc, char **argv) {
                     color = color_multiplier * iterations;
                 }
 
-                output_color(color, color, color);
+                output_color(color*r, color*g, color*b);
             }
             next_color_row();
         }
