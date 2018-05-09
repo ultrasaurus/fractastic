@@ -19,11 +19,11 @@ C=10 # color_multiplier
 
 #./run.sh examples/julia1 J $WIDTH $HEIGHT -2 2 -2 2 1000 20 -0.618 0 2
 
-for d in 5 6 7 8 9 10; #2 3 4
+for d in 5 # 6 7 8 9 10; #2 3 4
 do
   for shift in $(seq 0.0 0.1 2.6) # 0.0
   do
-    for c in 20 # $(seq 10 5 40) # 20
+    for c in $(seq 10 5 40) # 20
     do
       min=$(echo "$X_MIN + ($shift*2)" | bc)
       max=$(echo $X_MAX - $shift | bc)

@@ -12,12 +12,12 @@ temp_file=$(mktemp)
 output_file=$1
 
 # Compile the program
-make
+#make
 
 # If there was an error with compilation, exit
-if [ $? -ne 0 ]; then
-    exit 2
-fi
+#if [ $? -ne 0 ]; then
+#    exit 2
+#fi
 
 # Shift the arguments so that the output filename does not get
 # passed to the C program
@@ -46,6 +46,7 @@ mv $temp_file.ppm $output_file.ppm
 # Convert the ppm to png, if possible
 if [ "$(command -v convert)" ]; then
     convert $output_file.ppm $output_file.png
+    rm $output_file.ppm
 else
     echo "Install ImageMagick to get png output."
 fi
